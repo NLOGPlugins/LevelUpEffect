@@ -2,6 +2,7 @@
 
 namespace solo\LevelUpEffect;
 
+use pocketmine\Server;
 use pocketmine\Player;
 use pocketmine\math\Vector3;
 use pocketmine\entity\Entity;
@@ -9,7 +10,7 @@ use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\network\mcpe\protocol\RemoveEntityPacket;
 use pocketmine\network\mcpe\protocol\MoveEntityPacket;
 use pocketmine\network\mcpe\protocol\AddPlayerPacket;
-use pocketmine\scheduler\PluginTask;
+use pocketmine\scheduler\Task;
 use pocketmine\level\particle\DestroyBlockParticle;
 use pocketmine\level\particle\CriticalParticle;
 use pocketmine\block\Block;
@@ -17,8 +18,6 @@ use pocketmine\utils\UUID;
 use pocketmine\entity\Item;
 
 class LevelUpTask {
-	
-	private static $instance = null;
 	
 	public $plugin;
 	
@@ -40,27 +39,18 @@ class LevelUpTask {
 		$this->level = $nextLevel;
 		$this->step = 0;
 		
-		self::$instance = $this;
-		
 		$this->plugin = $plugin;
 		
 		$this->update();
 	}
 	
-	public static function getInstance() {
-		return self::$instance;
-	}
-	
 	public function random() {
-		
 		$result = mt_rand() / mt_getrandmax();
 		$result = (float) substr($result, 0, 14);
 		return $result;
-		
 	}
 	
 	public function update() {
-		
 		if (!($this->player->isOnline())) {
 			return;
 		}
@@ -304,13 +294,17 @@ class LevelUpTask {
 		}
 	
 		$this->step++;
-		$this->plugin->getServer()->getScheduler()->scheduleRepeatingTask(new class($this->plugin) extends PluginTask{
-			
-			public function onRun($currentTick) {
-				LevelUpTask::getInstance()->update();
+		Server::getInstance()->getScheduler()->scheduleDelayedTask(new class($this) extends Task{
+			private $task;
+
+			public function __construct($task){
+				$this->task = $task;
 			}
-				
-		}, 20);
+
+			public function onRun($currentTick){
+				$this->task->update();
+			}
+		}, 1);
 	}
 	
 }
