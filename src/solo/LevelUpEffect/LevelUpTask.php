@@ -19,8 +19,6 @@ use pocketmine\entity\Item;
 
 class LevelUpTask {
 	
-	public $plugin;
-	
 	public $player;
 	public $level, $step;
 	
@@ -34,12 +32,10 @@ class LevelUpTask {
 	 * @param Player $player
 	 * @param int $nextLevel
 	 */
-	public function __construct(Player $player, int $nextLevel, $plugin) {
+	public function __construct(Player $player, int $nextLevel) {
 		$this->player = $player;
 		$this->level = $nextLevel;
 		$this->step = 0;
-		
-		$this->plugin = $plugin;
 		
 		$this->update();
 	}
