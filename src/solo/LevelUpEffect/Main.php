@@ -11,20 +11,12 @@ use pocketmine\command\CommandSender;
 class Main extends PluginBase implements Listener{
 	
  	 public function onEnable(){
-    	$this->getServer()->getPluginManager()->registerEvents($this, $this);
- 	 }
- 	 
- 	 public function onEvent (PlayerJoinEvent $ev) {
- 	 	new LevelUpTask($ev->getPlayer(), (int) 2, $this);
- 	 }
- 	 
- 	 public function onLevelUpEvent (PlayerLevelUpEvent $ev) {
- 	 	new LevelUpTask($ev->getPlayer(), $ev->getNextLevel());
+    		$this->getServer()->getPluginManager()->registerEvents($this, $this);
  	 }
  	 
  	 public function onCommand (CommandSender $sender, Command $cmd, $label, array $args) {
  	 	if ($cmd->getName() === "par") {
- 	 		new LevelUpTask($sender, (int) 2, $this);
+ 	 		new LevelUpTask($sender, (int) 2);
  	 	}
  	 }
 }
